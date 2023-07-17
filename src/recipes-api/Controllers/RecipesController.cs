@@ -55,14 +55,20 @@ public class RecipesController : ControllerBase
     [HttpPut("{name}")]
     public IActionResult Update(string name, [FromBody] Recipe recipe)
     {
-        Recipe receita = _service.GetRecipe(name);
-        if (receita == null)
+        try
         {
-            return NotFound();
+            Recipe receita = _service.GetRecipe(name);
+            if (receita == null)
+            {
+                return NotFound();
+            }
+            _service.UpdateRecipe(recipe);
+            return StatusCode(204); // Também podia ser return NoContent();
         }
-        _service.UpdateRecipe(recipe);
-        return StatusCode(204, recipe);
-
+        catch
+        {
+            return StatusCode(400);  // podia ser return BadRequest();
+        }
     }
 
     // 5 - Sua aplicação deve ter o endpoint DEL /recipe
