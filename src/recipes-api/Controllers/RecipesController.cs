@@ -12,19 +12,19 @@ namespace recipes_api.Controllers;
 [ApiController]
 [Route("recipe")]
 public class RecipesController : ControllerBase
-{    
+{
     public readonly IRecipeService _service;
-    
+
     public RecipesController(IRecipeService service)
     {
-        this._service = service;        
+        this._service = service;
     }
 
     // 1 - Sua aplicação deve ter o endpoint GET /recipe
     //Read
     [HttpGet]
     public IActionResult Get()
-    {   
+    {
         // return Ok também funciona
         return StatusCode(200, _service.GetRecipes());
     }
@@ -33,7 +33,7 @@ public class RecipesController : ControllerBase
     //Read
     [HttpGet("{name}", Name = "GetRecipe")]
     public IActionResult Get(string name)
-    {                
+    {
         Recipe recipe = _service.GetRecipe(name);
         if (recipe == null)
         {
@@ -44,7 +44,7 @@ public class RecipesController : ControllerBase
 
     // 3 - Sua aplicação deve ter o endpoint POST /recipe
     [HttpPost]
-    public IActionResult Create([FromBody]Recipe recipe)
+    public IActionResult Create([FromBody] Recipe recipe)
     {
         _service.AddRecipe(recipe);
         return StatusCode(201, recipe);
@@ -53,9 +53,16 @@ public class RecipesController : ControllerBase
 
     // 4 - Sua aplicação deve ter o endpoint PUT /recipe
     [HttpPut("{name}")]
-    public IActionResult Update(string name, [FromBody]Recipe recipe)
+    public IActionResult Update(string name, [FromBody] Recipe recipe)
     {
-        throw new NotImplementedException();
+        Recipe receita = _service.GetRecipe(name);
+        if (receita == null)
+        {
+            return NotFound();
+        }
+        _service.UpdateRecipe(recipe);
+        return StatusCode(204, recipe);
+
     }
 
     // 5 - Sua aplicação deve ter o endpoint DEL /recipe
@@ -63,5 +70,5 @@ public class RecipesController : ControllerBase
     public IActionResult Delete(string name)
     {
         throw new NotImplementedException();
-    }    
+    }
 }
